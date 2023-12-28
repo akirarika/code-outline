@@ -6,7 +6,7 @@
   "publisher": "akirarika",
   "icon": "icon.png",
   "repository": "https://github.com/akirarika/code-outline",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "engines": {
     "vscode": "^1.85.0"
   },

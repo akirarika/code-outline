@@ -92,7 +92,7 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
             title: "title",
             arguments: [0],
           },
-          collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
+          collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
         })
       );
     }
