@@ -121,8 +121,8 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
       const text = content[currentline];
       const lang = editor.document.languageId;
       let title: string = "";
-      if (lang === "Code" && text.startsWith("model ")) {
-        title = "💎" + text.substring(6).trim().split(" ")[0];
+      if (lang === "prisma" && text.startsWith("model ")) {
+        title = "💎 " + text.substring(6).trim().split(" ")[0];
         if (content[currentline - 1].startsWith("// ")) {
           title = title + " | " + content[currentline - 1].substring(3).trim();
         } else if (content[currentline - 1].startsWith("/// ")) {
@@ -130,12 +130,16 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
         }
       } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export const ")) {
         title = "💎 (export) " + text.substring(13).split("=")[0].trim();
+      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export let ")) {
+        title = "💎 (export) " + text.substring(11).split("=")[0].trim();
       } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export function ")) {
         title = "💎 (export) " + text.substring(16).split("(")[0].split("<")[0].trim();
       } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export async function ")) {
         title = "💎 (export) " + text.substring(22).split("(")[0].split("<")[0].trim();
       } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("const ")) {
         title = "💎 " + text.substring(6).split("=")[0].trim();
+      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("let ")) {
+        title = "💎 " + text.substring(4).split("=")[0].trim();
       } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("function ")) {
         title = "💎 " + text.substring(9).split("(")[0].split("<")[0].trim();
       } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("async function ")) {

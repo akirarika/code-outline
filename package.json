@@ -1,12 +1,12 @@
 {
-  "name": "code-outline",
-  "displayName": "Code Outline",
+  "name": "prisma-outline",
+  "displayName": "Code Outliner",
   "description": "",
   "author": "akirarika",
   "publisher": "akirarika",
   "icon": "icon.png",
   "repository": "https://github.com/akirarika/code-outline",
-  "version": "1.0.8",
+  "version": "1.0.12",
   "engines": {
     "vscode": "^1.85.0"
   },
