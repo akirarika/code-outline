@@ -1,0 +1,62 @@
+{
+  "name": "code-outline",
+  "displayName": "Code Outline",
+  "description": "",
+  "author": "akirarika",
+  "publisher": "akirarika",
+  "icon": "icon.png",
+  "repository": "https://github.com/akirarika/code-outline",
+  "version": "1.0.8",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "code-outline",
+          "title": "Code Outline",
+          "icon": "icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "code-outline": [
+        {
+          "id": "code-outline-schema",
+          "name": ""
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.8",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
