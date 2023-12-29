@@ -9,6 +9,7 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
   }
 
   const content = editor.document.getText().split("\n");
+  const fileTitle = editor.document.fileName.split("/").at(-1);
 
   if (!element) {
     // is namespaces
@@ -17,7 +18,7 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
 
     items.push(
       new SchemaItem({
-        title: `⬆️ Front`,
+        title: `⬆️ To Front: (${fileTitle})`,
         model: false,
         startline: currentline + 1,
         stopline: maxline,
@@ -97,7 +98,7 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
 
     items.push(
       new SchemaItem({
-        title: `⬇️ Back`,
+        title: `⬇️ To Back: (${fileTitle})`,
         model: false,
         startline: maxline - 1,
         stopline: maxline - 1,
