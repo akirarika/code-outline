@@ -8,8 +8,6 @@ I always encounter scenarios where I need to write a lot of logic in a single fi
 
 Long code can force me to jump back and forth between files. To alleviate this issue, I developed this [VSCode extension](https://marketplace.visualstudio.com/items?itemName=akirarika.prisma-outline). You can create an "outline" in your code using comments, and then you can easily navigate to the vicinity of your outline using the sidebar in your VSCode. In addition to defining the outline through comments, I also attempted to summarize your code. Some key points in the code will be automatically summarized as sub-levels in your outline. It was initially designed for Prisma but now supports more languages.
 
-![](./snipaste-1.png)
-
 ## General
 
 For any document, the following two forms of comments will be considered as an outline. You can use the outline to quickly navigate within the document.
