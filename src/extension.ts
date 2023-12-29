@@ -3,6 +3,7 @@ import { SchemaProvider } from "./code-outline";
 import { join } from "path";
 import { debounce } from "lodash";
 import { existsSync } from "fs";
+import { nextTick } from "process";
 
 export async function activate(context: vscode.ExtensionContext) {
   vscode.window.onDidChangeActiveTextEditor((editor) => {
@@ -28,8 +29,10 @@ export async function activate(context: vscode.ExtensionContext) {
     if (!editor) {
       return;
     }
-    editor.revealRange(editor.document.lineAt(line === 0 ? 0 : line - 1).range, 3);
-    editor.selection = new vscode.Selection(editor.document.lineAt(line).range.end, editor.document.lineAt(line).range.end);
+    await nextTick(() => {
+      editor.revealRange(editor.document.lineAt(line).range, 3);
+      editor.selection = new vscode.Selection(editor.document.lineAt(line).range.end, editor.document.lineAt(line).range.end);
+    });
   });
 
   context.subscriptions.push(disposable);

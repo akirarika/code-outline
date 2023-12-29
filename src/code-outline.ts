@@ -56,8 +56,6 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
         title = "🍥 " + text.substring(2).trim();
       } else if (lang === "markdown" && text.startsWith("## ")) {
         title = "🍥 " + text.substring(3).trim();
-      } else if (lang === "markdown" && text.startsWith("### ")) {
-        title = "🍥 > " + text.substring(4).trim();
       } else {
         continue;
       }
@@ -123,9 +121,7 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
       let title: string = "";
       if (lang === "prisma" && text.startsWith("model ")) {
         title = "💎 " + text.substring(6).trim().split(" ")[0];
-        if (content[currentline - 1].startsWith("// ")) {
-          title = title + " | " + content[currentline - 1].substring(3).trim();
-        } else if (content[currentline - 1].startsWith("/// ")) {
+        if (content[currentline - 1].startsWith("/// ")) {
           title = title + " | " + content[currentline - 1].substring(4).trim();
         }
       } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export const ")) {
@@ -162,6 +158,8 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
         title = "🎨 " + text.substring(9).split("(")[0].split("<")[0].trim();
       } else if (lang === "vue" && text.startsWith("async function ")) {
         title = "🎨 " + text.substring(15).split("(")[0].split("<")[0].trim();
+      } else if (lang === "markdown" && text.startsWith("### ")) {
+        title = "🍥 " + text.substring(4).trim();
       } else {
         continue;
       }

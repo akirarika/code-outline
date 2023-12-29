@@ -1,12 +1,44 @@
 # Code Outline
 
-When your project becomes large and your schema grows, it can become challenging to read the `schema.prisma` file. Install me, and I will generate an outline for you that you can freely navigate!
+In your code, define an outline using comments and freely navigate within the outline! Support .vue, .prisma, .md, .ts, .js ...
 
-Note: If you're looking for a way to split the `schema.prisma` file, you can try using [prisma-import](https://github.com/ajmnz/prisma-import). I highly recommend it.
+[General](#General) | [Vue](#Vue) | [Prisma](#Prisma) | [Markdown](#Markdown) | [Typescript](#Typescript) | [Javascript](#Typescript)
 
-Note: If you see `There is no data provider registered that can provide view data`, please make sure you are not using the workspace feature and that the file is located in the `/prisma` directory within the directory you have opened. If you have just created this file, press Ctrl + Shift + P, then type `>Developer: Reload Window`.
+I always encounter scenarios where I need to write a lot of logic in a single file, often consisting of hundreds or thousands of lines of code. Yes! I'm talking about you! [Vue](https://vuejs.org/) and [Prisma](https://www.prisma.io/)!
 
-## Usage
+Long code can force me to jump back and forth between files. To alleviate this issue, I developed this [VSCode extension](https://marketplace.visualstudio.com/items?itemName=akirarika.prisma-outline). You can create an "outline" in your code using comments, and then you can easily navigate to the vicinity of your outline using the sidebar in your VSCode. In addition to defining the outline through comments, I also attempted to summarize your code. Some key points in the code will be automatically summarized as sub-levels in your outline. It was initially designed for Prisma but now supports more languages.
+
+![](./snipaste-1.png)
+
+## General
+
+For any document, the following two forms of comments will be considered as an outline. You can use the outline to quickly navigate within the document.
+
+```ts
+// * Your Outline
+```
+
+```ts
+/**
+ * -- Your Outline
+ */
+```
+
+```html
+<!-- Your Outline -->
+```
+
+## Vue
+
+In addition to declaring an outline in the [General](#General) section, the `<template>`, `<script>`, and `<style>` sections in a `.vue` file are also considered as outlines.
+
+These contents will be automatically annotated and treated as subsets of the outline.
+
+- `defineProps`, `defineEmits`, `ref`, `reactive`, `const`, `function`
+
+## Prisma
+
+> Note: If you're looking for a way to split the `schema.prisma` file, you can try using [prisma-import](https://github.com/ajmnz/prisma-import). I highly recommend it.
 
 You can add an outline by adding a comment starting with an asterisk (\*). You must have at least one outline for me to work, like this:
 
@@ -18,15 +50,16 @@ Although it is sufficient to do so, writing it like this may be more aesthetical
 
 ```ts
 // -----------------
-// * Your Outline
+// -- Your Outline
 // -----------------
 ```
 
-## Take a look
+All models will be automatically labeled and included as subsets of the outline. If the preceding line of a model is a comment in the form of `///`, the model's name will additionally include the content of that comment.
 
-Try pasting the following code into your `schema.prisma` file and see the effect, are you okay?
+Try pasting the following code into your `schema.prisma` file and see the effect, are you ready?
 
-```tsgenerator client {
+```ts
+generator client {
   provider = "prisma-client-js"
 }
 
@@ -40,16 +73,18 @@ datasource db {
 // * User and Permissions
 // -----------------
 
-model User {
+/// User Table
+model user {
   id             Int           @id
   name           String?
   email          String?
   updatedAt      DateTime         @updatedAt
   createdAt      DateTime         @default(now())
-  UserPermission UserPermission[]
+  UserPermission userPermission[]
 }
 
-model UserPermission {
+/// User Permission Table
+model userPermission {
   id        Int    @id
   name      String
   expiredAt DateTime?
@@ -62,7 +97,8 @@ model UserPermission {
 // * Articles
 // -----------------
 
-model Article {
+/// Article Table
+model article {
   id        Int   @id
   title     String
   content   String
@@ -71,7 +107,8 @@ model Article {
   updatedAt DateTime @updatedAt
 }
 
-model Comment {
+/// Comment Table
+model comment {
   id        Int   @id
   content   String
   articleId Int
@@ -86,3 +123,13 @@ model Comment {
 // TODO
 
 ```
+
+## Markdown
+
+In addition to the way outlines are declared in [General](#General), the `#` and `##` symbols in `.md` files are also considered as headings.
+
+However, `###` is treated as a subset of the outline and displayed accordingly.
+
+## Typescript
+
+For Typescript and Javascript, all top-level variables and methods are considered subsets of the outline.
