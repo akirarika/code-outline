@@ -46,7 +46,7 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
       const text = content[currentline];
       const lang = document.languageId;
       let title: string = "";
-      if (lang === "vue" && text.startsWith("// * ")) {
+      if (text.startsWith("// * ")) {
         title = "⭐ " + text.substring(5).trim();
       } else if (lang === "vue" && text.startsWith(" * --")) {
         title = "⭐ " + text.substring(5).trim();
