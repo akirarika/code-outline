@@ -24,7 +24,8 @@ export async function activate(context: vscode.ExtensionContext) {
   const schemaProvider = new SchemaProvider();
   vscode.window.registerTreeDataProvider("code-outline-schema", schemaProvider);
 
-  const disposable = vscode.commands.registerCommand("code-outline-schema.to", async (line: number) => {
+  const disposable = vscode.commands.registerCommand("code-outline-schema.to", async (document: vscode.TextDocument, line: number) => {
+    vscode.window.showTextDocument(document);
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       return;

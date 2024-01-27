@@ -1,58 +1,30 @@
 # Code Outline
 
-In your code, define an outline using comments and freely navigate within the outline! Support .vue, .prisma, .md, .ts, .js ...
+Helps you display an outline for your lengthy schema.prisma or vue files and sets up nodes in your code using comments!
 
-[General](#General) | [Vue](#Vue) | [Prisma](#Prisma) | [Markdown](#Markdown) | [Typescript](#Typescript) | [Javascript](#Typescript)
+I often find myself in situations where I need to write a lot of logic in a single file, which typically consists of hundreds or thousands of lines of code. Yes, I'm talking about you, [Vue](https://vuejs.org/) and [Prisma](https://www.prisma.io/)!
 
-I always encounter scenarios where I need to write a lot of logic in a single file, often consisting of hundreds or thousands of lines of code. Yes! I'm talking about you! [Vue](https://vuejs.org/) and [Prisma](https://www.prisma.io/)!
-
-Long code can force me to jump back and forth between files. To alleviate this issue, I developed this [VSCode extension](https://marketplace.visualstudio.com/items?itemName=akirarika.prisma-outline). You can create an "outline" in your code using comments, and then you can easily navigate to the vicinity of your outline using the sidebar in your VSCode. In addition to defining the outline through comments, I also attempted to summarize your code. Some key points in the code will be automatically summarized as sub-levels in your outline. It was initially designed for Prisma but now supports more languages.
-
-## General
-
-For any document, the following two forms of comments will be considered as an outline. You can use the outline to quickly navigate within the document.
-
-```ts
-// * Your Outline
-```
-
-```ts
-/**
- * -- Your Outline
- */
-```
-
-```html
-<!-- Your Outline -->
-```
-
-## Vue
-
-In addition to declaring an outline in the [General](#General) section, the `<template>`, `<script>`, and `<style>` sections in a `.vue` file are also considered as outlines.
-
-These contents will be automatically annotated and treated as subsets of the outline.
-
-- `defineProps`, `defineEmits`, `ref`, `reactive`, `const`, `function`
+Long code forces me to constantly switch between files. To alleviate this problem, I developed this [VSCode extension](https://marketplace.visualstudio.com/items?itemName=akirarika.prisma-outline). You can use comments to create a "node" in your code, and then easily navigate to your comments using the sidebar in VSCode. In addition to defining nodes in the outline using comments, I also attempt to summarize your code. Some key points in the code will automatically be summarized as child nodes of the outline. It was originally designed for Prisma, but now supports Vue as well.
 
 ## Prisma
 
-> Note: If you're looking for a way to split the `schema.prisma` file, you can try using [prisma-import](https://github.com/ajmnz/prisma-import). I highly recommend it.
+> Note: If you want a way to split your `schema.prisma` file, you can try using [prisma-import](https://github.com/ajmnz/prisma-import). I highly recommend it.
 
-You can add an outline by adding a comment starting with an asterisk (\*). You must have at least one outline for me to work, like this:
+You can add outline nodes by adding comments that start with an asterisk (\*). You must have at least one outline node for me to work, like this:
 
 ```ts
-// * Your Outline
+// * Your outline node
 ```
 
-Although it is sufficient to do so, writing it like this may be more aesthetically pleasing:
+While that is enough, it might look nicer to write it like this:
 
 ```ts
 // -----------------
-// -- Your Outline
+// * Your outline node
 // -----------------
 ```
 
-All models will be automatically labeled and included as subsets of the outline. If the preceding line of a model is a comment in the form of `///`, the model's name will additionally include the content of that comment.
+All models will be automatically marked and included as subsets of the outline nodes. If the line before a model is a comment in the form of `///`, the name of the model will include the content of that comment.
 
 Try pasting the following code into your `schema.prisma` file and see the effect, are you ready?
 
@@ -68,10 +40,10 @@ datasource db {
 }
 
 // -----------------
-// * User and Permissions
+// * Users and Permissions
 // -----------------
 
-/// User Table
+/// User table
 model user {
   id             Int           @id
   name           String?
@@ -81,7 +53,7 @@ model user {
   UserPermission userPermission[]
 }
 
-/// User Permission Table
+/// User Permission table
 model userPermission {
   id        Int    @id
   name      String
@@ -95,7 +67,7 @@ model userPermission {
 // * Articles
 // -----------------
 
-/// Article Table
+/// Article table
 model article {
   id        Int   @id
   title     String
@@ -105,7 +77,7 @@ model article {
   updatedAt DateTime @updatedAt
 }
 
-/// Comment Table
+/// Comment table
 model comment {
   id        Int   @id
   content   String
@@ -122,12 +94,30 @@ model comment {
 
 ```
 
-## Markdown
+## Vue
 
-In addition to the way outlines are declared in [General](#General), the `#` and `##` symbols in `.md` files are also considered as headings.
+For `.vue` documents, the following comments will be treated as outline nodes. You can use outline nodes to quickly navigate through the document.
 
-However, `###` is treated as a subset of the outline and displayed accordingly.
+```ts
+// * Your outline
+```
 
-## Typescript
+```ts
+/**
+ * -- Your outline
+ */
+```
 
-For Typescript and Javascript, all top-level variables and methods are considered subsets of the outline.
+```html
+<!-- Your outline -->
+```
+
+These will be automatically commented and treated as subsets of the outline.
+
+- `defineProps`, `defineEmits`, `ref`, `reactive`, `const`, `function`
+
+## More
+
+The extension will always show the outline nodes in your `/prisma/schema.prisma` file unless you have opened a `.vue` file.
+
+If the extension is not displaying your prisma outline nodes, make sure that there is a `/prisma/schema.prisma` file in the directory of the editor you currently have open. Often, this is because you have opened the parent directory of your project.

@@ -1,31 +1,41 @@
+import { existsSync } from "fs";
 import { join } from "path";
 import * as vscode from "vscode";
 
 const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<SchemaItem>> => {
   const items: Array<SchemaItem> = [];
+  const prismaSchemaPath = join(vscode.workspace.workspaceFolders?.at(0)?.uri?.fsPath ?? "", "prisma/schema.prisma");
+  const prismaSchemaDocment = existsSync(prismaSchemaPath) ? vscode.workspace.openTextDocument(prismaSchemaPath) : undefined;
   const editor = vscode.window.activeTextEditor;
-  if (!editor) {
-    return items;
+
+  let document: vscode.TextDocument;
+  if (editor && (editor.document.languageId === "vue" || editor.document.languageId === "prisma")) {
+    document = editor!.document;
+  } else if (prismaSchemaDocment) {
+    document = await prismaSchemaDocment;
+  } else {
+    return [];
   }
 
-  const content = editor.document.getText().split("\n");
-  const fileTitle = editor.document.fileName.split("/").at(-1);
+  const content = document.getText().split("\n");
+  const fileTitle = document.fileName.split("/").at(-1);
 
   if (!element) {
     // is namespaces
     let currentline = -1; // NOTE: that it does not increment from 0, but from 1!
-    const maxline = editor.document.lineCount;
+    const maxline = document.lineCount;
 
     items.push(
       new SchemaItem({
         title: `⬆️ To Front: (${fileTitle})`,
+        document: document,
         model: false,
         startline: currentline + 1,
         stopline: maxline,
         command: {
           command: "code-outline-schema.to",
           title: "title",
-          arguments: [currentline + 1],
+          arguments: [document, currentline + 1],
         },
         collapsibleState: vscode.TreeItemCollapsibleState.None,
       })
@@ -34,13 +44,13 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
     while (currentline < maxline - 1) {
       currentline = currentline + 1;
       const text = content[currentline];
-      const lang = editor.document.languageId;
+      const lang = document.languageId;
       let title: string = "";
-      if (text.startsWith("// * ")) {
+      if (lang === "vue" && text.startsWith("// * ")) {
         title = "⭐ " + text.substring(5).trim();
-      } else if (text.startsWith(" * --")) {
+      } else if (lang === "vue" && text.startsWith(" * --")) {
         title = "⭐ " + text.substring(5).trim();
-      } else if (text.includes("<!--") && text.includes("-->")) {
+      } else if (lang === "vue" && text.includes("<!--") && text.includes("-->")) {
         if (text.includes("<!-- <") || text.includes("<!--<")) {
           continue;
         }
@@ -53,10 +63,6 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
         title = "🔰 <Template>";
       } else if (lang === "vue" && text.startsWith("<style")) {
         title = "🔰 <Style>";
-      } else if (lang === "markdown" && text.startsWith("# ")) {
-        title = "🍥 " + text.substring(2).trim();
-      } else if (lang === "markdown" && text.startsWith("## ")) {
-        title = "🍥 " + text.substring(3).trim();
       } else {
         continue;
       }
@@ -66,13 +72,14 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
       items.push(
         new SchemaItem({
           title: title,
+          document: document,
           model: false,
           startline: currentline,
           stopline: maxline - 1,
           command: {
             command: "code-outline-schema.to",
             title: "title",
-            arguments: [currentline],
+            arguments: [document, currentline],
           },
           collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
         })
@@ -83,13 +90,14 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
       items.push(
         new SchemaItem({
           title: `🧵 No groups`,
+          document: document,
           model: false,
           startline: 0,
           stopline: maxline - 1,
           command: {
             command: "code-outline-schema.to",
             title: "title",
-            arguments: [0],
+            arguments: [document, 0],
           },
           collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
         })
@@ -99,13 +107,14 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
     items.push(
       new SchemaItem({
         title: `⬇️ To Back: (${fileTitle})`,
+        document: document,
         model: false,
         startline: maxline - 1,
         stopline: maxline - 1,
         command: {
           command: "code-outline-schema.to",
           title: "title",
-          arguments: [maxline - 1],
+          arguments: [document, maxline - 1],
         },
         collapsibleState: vscode.TreeItemCollapsibleState.None,
       })
@@ -118,29 +127,13 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
     while (currentline < maxline) {
       currentline = currentline + 1;
       const text = content[currentline];
-      const lang = editor.document.languageId;
+      const lang = document.languageId;
       let title: string = "";
       if (lang === "prisma" && text.startsWith("model ")) {
         title = "💎 " + text.substring(6).trim().split(" ")[0];
         if (content[currentline - 1].startsWith("/// ")) {
           title = title + " | " + content[currentline - 1].substring(4).trim();
         }
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export const ")) {
-        title = "💎 (export) " + text.substring(13).split("=")[0].trim();
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export let ")) {
-        title = "💎 (export) " + text.substring(11).split("=")[0].trim();
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export function ")) {
-        title = "💎 (export) " + text.substring(16).split("(")[0].split("<")[0].trim();
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("export async function ")) {
-        title = "💎 (export) " + text.substring(22).split("(")[0].split("<")[0].trim();
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("const ")) {
-        title = "💎 " + text.substring(6).split("=")[0].trim();
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("let ")) {
-        title = "💎 " + text.substring(4).split("=")[0].trim();
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("function ")) {
-        title = "💎 " + text.substring(9).split("(")[0].split("<")[0].trim();
-      } else if ((lang === "typescript" || lang === "javascript") && text.startsWith("async function ")) {
-        title = "💎 " + text.substring(15).split("(")[0].split("<")[0].trim();
       } else if (lang === "vue" && text.includes("defineProps")) {
         title = "⏬ Props";
       } else if (lang === "vue" && text.includes("defineEmits")) {
@@ -159,8 +152,6 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
         title = "🎨 " + text.substring(9).split("(")[0].split("<")[0].trim();
       } else if (lang === "vue" && text.startsWith("async function ")) {
         title = "🎨 " + text.substring(15).split("(")[0].split("<")[0].trim();
-      } else if (lang === "markdown" && text.startsWith("### ")) {
-        title = "🍥 " + text.substring(4).trim();
       } else {
         continue;
       }
@@ -168,13 +159,14 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
       items.push(
         new SchemaItem({
           title: title,
+          document: document,
           model: true,
           startline: currentline,
           stopline: currentline,
           command: {
             command: "code-outline-schema.to",
             title: "title",
-            arguments: [currentline],
+            arguments: [document, currentline],
           },
           collapsibleState: vscode.TreeItemCollapsibleState.None,
         })
@@ -214,6 +206,7 @@ class SchemaItem extends vscode.TreeItem {
     startline: number;
     stopline: number;
     command: any;
+    document: vscode.TextDocument;
     iconPath?: any;
     tooltip?: string | vscode.MarkdownString | undefined;
   }) {
