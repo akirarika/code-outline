@@ -55,6 +55,8 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
           continue;
         }
         title = "⭐ " + text.split("<!--").at(-1)!.split("-->")[0].trim();
+      } else if (lang === "vue" && text.endsWith(" = await defineLogic(")) {
+        title = "⭐ " + text.substring(6, text.length - 34).trim();
       } else if (lang === "vue" && text.startsWith("<route")) {
         title = "🔰 <Route>";
       } else if (lang === "vue" && text.startsWith("<script")) {
@@ -178,7 +180,7 @@ const onSchemaDocment = async (element: SchemaItem | undefined): Promise<Array<S
 };
 
 export class SchemaProvider implements vscode.TreeDataProvider<SchemaItem> {
-  constructor() {}
+  constructor() { }
 
   getTreeItem(element: SchemaItem): vscode.TreeItem {
     return element;
